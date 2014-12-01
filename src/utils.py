@@ -1,4 +1,5 @@
 '''
+1 Point discontinuities and edges
 Utilities
 @author     Matthias Moulin & Vincent Peeters
 @version    1.0
@@ -6,6 +7,21 @@ Utilities
 
 import numpy as np
 import pylab
+
+def number_of_large_coeffs(C, threshold=0.1):
+    count = 0
+    for i in range(C.shape[0]):
+        if (abs(C[i]) >= threshold):
+            count = count + 1
+    return count
+
+def number_of_large_coeffs2(C, threshold=0.1):
+    count = 0
+    for i in range(C.shape[0]):
+        for j in range(C.shape[1]):
+            if (abs(C[i,j]) >= threshold):
+                count = count + 1
+    return count
 
 def concat_coeffs(A):
     return reduce(np.append, A[1:], A[0])
@@ -18,13 +34,7 @@ def combine(S, (H, V, D)):
     (Hx, Hy) = H.shape
     (Vx, Vy) = V.shape
     (Dx, Dy) = D.shape
-    
-    print("----")
-    print(S.shape)
-    print(H.shape)
-    print(V.shape)
-    print(D.shape)
-    
+
     NS = np.zeros((Sx+Dx, Sy+Dy))
     print(NS.shape)
     for i in range(Sx):
@@ -39,16 +49,17 @@ def combine(S, (H, V, D)):
     for i in range(Dx):
         for j in range(Dy):
             NS[i+Sx,j+Sy] = D[i,j]
-    return NS   
-    
+    return NS      
     
 def draw_coeffs(C):
     pylab.figure()
     pylab.semilogy(abs(C), '-')
+    pylab.xlabel("Coefficient number")
+    pylab.ylabel("Coefficient value")
     pylab.show()
     
 def draw_coeffs2(C):
     pylab.figure()
-    pylab.imshow(C, interpolation='nearest', cmap=pylab.cm.ocean, extent=(0.5,np.shape(C)[0]+0.5,0.5,np.shape(C)[1]+0.5))
+    pylab.imshow(C, interpolation='nearest', cmap=pylab.cm.coolwarm, extent=(0.5,np.shape(C)[0]+0.5,0.5,np.shape(C)[1]+0.5))
     pylab.colorbar()
     pylab.show()
