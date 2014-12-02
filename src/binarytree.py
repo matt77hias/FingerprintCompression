@@ -13,7 +13,7 @@ import pywt
 # COST FUNCTIONS
 ############################################################################### 
 
-def cost_threshold(C, threshold):
+def cost_threshold(threshold):
     def cost_fixed_threshold(C):
         cost = 0
         for i in range(C.shape[0]):
