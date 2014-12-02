@@ -69,7 +69,7 @@ def wp2(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
                       with the best basis according to the given cost function, for the given input signal. 
     '''
     #Data collection step
-    Nodes = collect2(S, wavelet=wavelet, mode=mode, level=level)
+    Nodes = collect(S, wavelet=wavelet, mode=mode, level=level)
     #Dynamic programming upstream traversal
     mark(Nodes, cost)
     node.print_nodes(Nodes)
@@ -81,7 +81,7 @@ def wp2(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
     traverse(Nodes[0][3], Nodes, Result)
     return sorted(Result, cmp=node.compare_low_level_first, reverse=False)
                      
-def collect2(S, wavelet, mode, level):
+def collect(S, wavelet, mode, level):
     '''
     Returns the full quad tree of wavelet packets.
     @param S:         Input signal.
