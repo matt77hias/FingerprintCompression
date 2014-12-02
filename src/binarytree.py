@@ -14,7 +14,17 @@ import pywt
 ############################################################################### 
 
 def cost_threshold(threshold):
+    '''
+    Returns a cost function for computing the number of entries
+    of a 1D input signal higher (in absolute value) than the given threshold.
+    @param threshold:     The threshold value.
+    '''
     def cost_fixed_threshold(C):
+        '''
+        Computes the number of entries of a 1D input signal
+        higher (in absolute value) than the threshold.
+        @param C:         Input signal.
+        '''
         cost = 0
         for i in range(C.shape[0]):
           if (abs(C[i]) > threshold):
@@ -23,6 +33,10 @@ def cost_threshold(threshold):
     return cost_fixed_threshold
         
 def cost_shannon(C):
+    '''
+    Computes the Shannen entropy of a 1D input signal
+    @param C:         Input signal.
+    '''
     cost = 0
     for i in range(C.shape[0]):
         if (C[i] != 0):
@@ -68,6 +82,21 @@ def wp(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=None):
     return sorted(Result, cmp=node.compare_low_level_first, reverse=False)
                      
 def collect(S, wavelet, mode, level):
+    '''
+    Returns the full binary tree of wavelet packets.
+    @param S:         Input signal.
+                      Both single and double precision floating-point data types are supported
+                      and the output type depends on the input type. If the input data is not
+                      in one of these types it will be converted to the default double precision
+                      data format before performing computations.
+    @param wavelet:   Wavelet to use in the transform. 
+                      This must be a name of the wavelet from the wavelist() list.
+    @param mode:      Signal extension mode to deal with the border distortion problem.
+    @param level:     Number of decomposition steps to perform. If the level is None, then the
+                      full decomposition up to the level computed with dwt_max_level() function for
+                      the given data and wavelet lengths is performed.
+    @return:          The full binary tree of wavelet packets.
+    '''
     Nodes = [[] for i in range(level)]
     (Cl, Cr) = pywt.dwt(S, wavelet=wavelet, mode=mode)
     Nodes[0] = [node.Node(Cl, 0, 0), node.Node(Cr, 0, 1)]
@@ -82,6 +111,13 @@ def collect(S, wavelet, mode, level):
     return Nodes
     
 def mark(Nodes, cost):
+    '''
+    Marks every node of nodes with the best cost seen so far. 
+    @param Nodes:     List containing the nodes of the 1D discrete wavelet packet
+                      transformation.
+    @param cost:      The (single parameter) cost function that must be used while
+                      searching for the best basis.
+    '''
     for p in range(len(Nodes[-1])):
         Node = Nodes[-1][p]
         cp = cost(Node.C)
@@ -99,6 +135,16 @@ def mark(Nodes, cost):
                 Node.best = cc 
           
 def traverse(Node, Nodes, Result):
+    '''
+    Traverses the given node.
+    The node will be aadded to the result if it belongs to the best basis.
+    Otherwise the node childs will be traversed recursively.
+    @param Node:      The current node to traverse.
+    @param Nodes:     List containing the nodes of the 1D discrete wavelet packet
+                      transformation.
+    @param Result:    Buffer containing the nodes traversed so far that belong
+                      to the best basis.
+    '''
     if (Node.best == Node.cost):
         Result.append(Node)
     else:
@@ -115,7 +161,7 @@ def iwp(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
     Returns the inverse 1D discrete wavelet packet transformation for the given
     list containing the nodes of the 1D discrete wavelet packet transformation.
     @param Nodes:     List containing the nodes of the 1D discrete wavelet packet
-                      transformation
+                      transformation.
     @param wavelet:   Wavelet to use in the transform. 
                       This must be a name of the wavelet from the wavelist() list.
     @param mode:      Signal extension mode to deal with the border distortion problem.
