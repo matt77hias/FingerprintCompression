@@ -32,7 +32,7 @@ def cost_shannon(C):
     return cost
 
 ###############################################################################
-# ALGORITHM FUNCTIONS
+# ANALYSIS ALGORITHM FUNCTIONS
 ###############################################################################        
 
 def wp2(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
