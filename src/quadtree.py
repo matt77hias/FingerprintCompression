@@ -35,7 +35,7 @@ def cost_shannon(C):
 # ALGORITHM FUNCTIONS
 ###############################################################################        
 
-def wptree(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
+def wp2(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
     #Data collection step
     Nodes = collect(S, wavelet=wavelet, mode=mode, level=level)
     #Dynamic programming upstream traversal
@@ -45,7 +45,9 @@ def wptree(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
     Result = []
     traverse(Nodes[0][0], Nodes, Result)
     traverse(Nodes[0][1], Nodes, Result)
-    return sorted(Result, cmp=node.compare, reverse=False)
+    traverse(Nodes[0][2], Nodes, Result)
+    traverse(Nodes[0][3], Nodes, Result)
+    return sorted(Result, cmp=node.compare_low_level_first, reverse=False)
                      
 def collect(S, wavelet, mode, level):
     Nodes = [[] for i in range(level)]
@@ -83,7 +85,6 @@ def mark(Nodes, cost):
 def traverse(Node, Nodes, Result):
     if (Node.best == Node.cost):
         Result.append(Node)
-        return
     else:
         i = Node.level + 1
         j = 4 * Node.index
@@ -91,6 +92,22 @@ def traverse(Node, Nodes, Result):
         traverse(Nodes[i][j+1], Nodes, Result)
         traverse(Nodes[i][j+2], Nodes, Result)  
         traverse(Nodes[i][j+3], Nodes, Result) 
+        
+###############################################################################
+# SYNTHESIS ALGORITHM FUNCTIONS
+###############################################################################        
+def iwp2(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
+    while len(Nodes) != 1:
+        Nodes = sorted(Nodes, cmp=node.compare_high_level_first, reverse=False)
+        Node1 = Nodes[0]
+        Node2 = Nodes[1]
+        Node3 = Nodes[2] 
+        Node4 = Nodes[3]  
+        S = pywt.idwt2((Node1.C, (Node2.C, Node3.C, Node4.C)), wavelet=wavelet, mode=mode)
+        Merged = node.Node(S, (Node1.level-1), (Node1.index / 4))
+        Nodes = Nodes[4:]
+        Nodes.append(Merged)
+    return Nodes[0].C
         
 ###############################################################################
 # TESTS
@@ -112,5 +129,6 @@ def matrix2(size = 100):
       
 if __name__ == "__main__":
     S = matrix(64)
-    Nodes=wptree(S, cost_shannon)
+    Nodes=wp2(S, cost_shannon)
     node.print_flattened_nodes(Nodes)
+    R = iwp2(Nodes)

@@ -37,9 +37,26 @@ class Node:
         self.cost = -1
         self.best = -1
 
-def compare(Node1, Node2) :
+def compare_low_level_first(Node1, Node2) :
     if Node1.level < Node2.level:
         return -1 
     if Node1.level > Node2.level:
         return 1
-    return Node1.index < Node2.index   
+    if Node1.index < Node2.index:
+        return -1
+    if Node1.index > Node2.index:
+        return 1
+    else: 
+        return 0
+    
+def compare_high_level_first(Node1, Node2) :
+    if Node1.level > Node2.level:
+        return -1 
+    if Node1.level < Node2.level:
+        return 1
+    if Node1.index < Node2.index:
+        return -1
+    if Node1.index > Node2.index:
+        return 1
+    else: 
+        return 0 

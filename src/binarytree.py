@@ -30,10 +30,9 @@ def cost_shannon(C):
     return cost
 
 ###############################################################################
-# ALGORITHM FUNCTIONS
+# ANALYSIS ALGORITHM FUNCTIONS
 ###############################################################################        
-
-def wptree(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=4):
+def wp(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=4):
     #Data collection step
     Nodes = collect(S, wavelet=wavelet, mode=mode, level=level)
     #Dynamic programming upstream traversal
@@ -43,7 +42,7 @@ def wptree(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=4):
     Result = []
     traverse(Nodes[0][0], Nodes, Result)
     traverse(Nodes[0][1], Nodes, Result)
-    return sorted(Result, cmp=node.compare, reverse=False)
+    return sorted(Result, cmp=node.compare_low_level_first, reverse=False)
                      
 def collect(S, wavelet, mode, level):
     Nodes = [[] for i in range(level)]
@@ -79,13 +78,25 @@ def mark(Nodes, cost):
 def traverse(Node, Nodes, Result):
     if (Node.best == Node.cost):
         Result.append(Node)
-        return
     else:
         i = Node.level + 1
         j = 2 * Node.index
         traverse(Nodes[i][j], Nodes, Result)
         traverse(Nodes[i][j+1], Nodes, Result)                   
 
+###############################################################################
+# SYNTHESIS ALGORITHM FUNCTIONS
+###############################################################################        
+def iwp(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
+    while len(Nodes) != 1:
+        Nodes = sorted(Nodes, cmp=node.compare_high_level_first, reverse=False)
+        Node1 = Nodes[0]
+        Node2 = Nodes[1] 
+        S = pywt.idwt(Node1.C, Node2.C, wavelet=wavelet, mode=mode, correct_size=True)
+        Merged = node.Node(S, (Node1.level-1), (Node1.index / 2))
+        Nodes = Nodes[2:]
+        Nodes.append(Merged)
+    return Nodes[0].C
 
 ###############################################################################
 # TESTS
@@ -100,7 +111,14 @@ def samples(nb_samples=1000):
     t = (np.linspace(-1,1,nb_samples+1))[:-1]
     return np.vectorize(h)(x=t)  
       
+def get_smooth_func():
+    time = np.linspace(1,40,1000)
+    freq = 500
+    freqs = 8000
+    return np.sin(2*np.pi*freq/freqs*time)     
+      
 if __name__ == "__main__":
-    S = samples(64)
-    Nodes=wptree(S, cost_shannon)
+    S = get_smooth_func()
+    Nodes=wp(S, cost_shannon)
     node.print_flattened_nodes(Nodes)
+    R = iwp(Nodes)
