@@ -10,6 +10,12 @@ Nodes and node utilities
 ############################################################################### 
 
 def print_nodes(Nodes, fname='nodes.txt'):
+    '''
+    Prints the given non-flattened nodes to a file with the given file name.
+    @param Nodes:     List containing the non-flattened nodes of the (1D or 2D)
+                      discrete wavelet packet transformation.
+    @param fname:     The filename.
+    '''
     f = open(fname,'w')
     for i in range(len(Nodes)):
         for j in range(len(Nodes[i])):
@@ -19,6 +25,12 @@ def print_nodes(Nodes, fname='nodes.txt'):
     f.close()
 
 def print_flattened_nodes(Nodes, fname='result.txt'):
+    '''
+    Prints the given flattened nodes to a file with the given file name.
+    @param Nodes:     List containing the flattened nodes of the (1D or 2D)
+                      discrete wavelet packet transformation.
+    @param fname:     The filename.
+    '''
     f = open(fname,'w')
     for i in range(len(Nodes)):
         Node = Nodes[i]
@@ -31,6 +43,16 @@ def print_flattened_nodes(Nodes, fname='result.txt'):
 ###############################################################################                                                                                                                                                   
 class Node:
     def __init__(self, C, level, index):
+        '''
+        Creates a new node.
+        @param C:         The coefficients for the new node
+        @param level:     The level for the new node
+        @param index:     The index for the new node
+        @note:            level 0 corresponds with the first
+                          decomposition in this implementation
+                          and not with the original signal as
+                          opposed to the assignment.
+        '''
         self.C = C
         self.level = level
         self.index = index
@@ -38,6 +60,12 @@ class Node:
         self.best = -1
 
 def compare_low_level_first(Node1, Node2) :
+    '''
+    Compares the first given node against the second
+    given node. (low levels first, low indices first)
+    @param Node1:     The first node
+    @param Node2:     The second node
+    '''
     if Node1.level < Node2.level:
         return -1 
     if Node1.level > Node2.level:
@@ -50,6 +78,12 @@ def compare_low_level_first(Node1, Node2) :
         return 0
     
 def compare_high_level_first(Node1, Node2) :
+    '''
+    Compares the first given node against the second
+    given node. (high levels first, low indices first)
+    @param Node1:     The first node
+    @param Node2:     The second node
+    '''
     if Node1.level > Node2.level:
         return -1 
     if Node1.level < Node2.level:
