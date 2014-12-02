@@ -32,7 +32,30 @@ def cost_shannon(C):
 ###############################################################################
 # ANALYSIS ALGORITHM FUNCTIONS
 ###############################################################################        
-def wp(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=4):
+def wp(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=None):
+    '''
+    Returns the 1D discrete wavelet packet transformation, with the best basis according
+    to the given cost function, for the given 1D input signal.
+    @param S:         Input signal.
+                      Both single and double precision floating-point data types are supported
+                      and the output type depends on the input type. If the input data is not
+                      in one of these types it will be converted to the default double precision
+                      data format before performing computations.
+    @param cost:      The (single parameter) cost function that must be used while
+                      searching for the best basis.
+    @param wavelet:   Wavelet to use in the transform. 
+                      This must be a name of the wavelet from the wavelist() list.
+    @param mode:      Signal extension mode to deal with the border distortion problem.
+                      The default mode is periodic-padding.
+    @param level:     Number of decomposition steps to perform. If the level is None, then the
+                      full decomposition up to the level computed with dwt_max_level() function for
+                      the given data and wavelet lengths is performed.
+    @return:          A list containing the nodes of the 1D discrete wavelet packet transformation,
+                      with the best basis according to the given cost function, for the given input signal. 
+    '''
+    if (level == None):
+        level = pywt.dwt_max_level(S.shape[0], pywt.Wavelet(wavelet))
+    
     #Data collection step
     Nodes = collect(S, wavelet=wavelet, mode=mode, level=level)
     #Dynamic programming upstream traversal
@@ -88,6 +111,18 @@ def traverse(Node, Nodes, Result):
 # SYNTHESIS ALGORITHM FUNCTIONS
 ###############################################################################        
 def iwp(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
+    '''
+    Returns the inverse 1D discrete wavelet packet transformation for the given
+    list containing the nodes of the 1D discrete wavelet packet transformation.
+    @param Nodes:     List containing the nodes of the 1D discrete wavelet packet
+                      transformation
+    @param wavelet:   Wavelet to use in the transform. 
+                      This must be a name of the wavelet from the wavelist() list.
+    @param mode:      Signal extension mode to deal with the border distortion problem.
+                      The default mode is periodic-padding.
+    @return:          The inverse 1D discrete wavelet packet transformation for the given
+                      list containing the nodes of the 1D discrete wavelet packet transformation.
+    '''
     while len(Nodes) != 1:
         Nodes = sorted(Nodes, cmp=node.compare_high_level_first, reverse=False)
         Node1 = Nodes[0]
