@@ -11,6 +11,7 @@ import cv2
 import numpy as np
 import pylab
 import pywt
+import utils
 import quadtree
 
 ###############################################################################
@@ -53,6 +54,10 @@ def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.per, level=4):
         CCD = pywt.thresholding.hard(CD, threshold, 0)
         B.append((CCH, CCV, CCD))
         
+     
+    n = utils.number_of_large_coeffs(utils.concat_coeffs2(B))
+    stats_dwt2.append(n)
+        
     # 2D inverse discrete wavelet transform
     return pywt.waverec2(B, wavelet=wavelet, mode=mode)
     
@@ -91,10 +96,18 @@ def compress_wp2(S, fraction, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     threshold = fraction * maximum
     for Node in Nodes:
         Node.C = pywt.thresholding.hard(Node.C, threshold, 0)
+     
+    n = 0
+    for Node in Nodes:   
+        n = n + utils.number_of_large_coeffs(Node.C)
+    stats_wp2.append(n)
     
     # 2D inverse discrete wavelet packet transform
     return quadtree.iwp2(Nodes, wavelet=wavelet, mode=mode)
-    
+ 
+stats_dwt2 = []   
+stats_wp2 = []
+      
 def mse(S1, S2):
     '''
     Returns the mean squared error of the compressed 2D signal S2
@@ -139,6 +152,14 @@ def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     pylab.plot(fractions, E2, label='WP')
     pylab.xlabel("Fraction")
     pylab.ylabel("Mean Square Error")
+    pylab.legend(loc=2)
+    pylab.show()
+    
+    pylab.figure()
+    pylab.plot(fractions, stats_dwt2, label='DWT')
+    pylab.plot(fractions, stats_wp2, label='WP')
+    pylab.xlabel("Fraction")
+    pylab.ylabel("Number of large coefficients")
     pylab.legend(loc=2)
     pylab.show()
 

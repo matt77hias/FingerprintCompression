@@ -28,7 +28,6 @@ def combine(S, (H, V, D)):
     (Dx, Dy) = D.shape
 
     NS = np.zeros((Sx+Dx, Sy+Dy))
-    print(NS.shape)
     for i in range(Sx):
         for j in range(Sy):
             NS[i,j] = S[i,j]

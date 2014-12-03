@@ -37,7 +37,7 @@ def wp2(S, costf, wavelet="db4", mode=pywt.MODES.ppd, level=2):
     Nodes = collect(S, wavelet=wavelet, mode=mode, level=level)
     #Dynamic programming upstream traversal
     mark(Nodes, costf)
-    node.print_nodes(Nodes)
+    #node.print_nodes(Nodes)
     #Dynamic programming downstream traversal
     Result = []
     traverse(Nodes[0][0], Nodes, Result)
