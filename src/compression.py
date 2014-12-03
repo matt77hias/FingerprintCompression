@@ -99,26 +99,40 @@ def mse(S1, S2):
     @param S1:        The original 2D signal
     @param S2:        The compressed 2D signal
     '''
-    count = 0
-    n = S1.shape[0]
-    m = S1.shape[1]
-    for i in range(n):
-        for j in range(m):
-            count = count + (S1[i,j]-S2[i,j])*(S1[i,j]-S2[i,j])
-    return float(count) / (n*m)
+    D = S1-S2
+    return (float(np.sum(np.multiply(D, D)))) / (D.shape[0]*D.shape[1])
+    
+def best_fit(S1, S2):
+    (m, n) = S1.shape
+    (p, q) = S2.shape
+    print (S1.shape)
+    print (S2.shape)
+    bi = bj = -1
+    best = np.inf
+    for i in range(p - m + 1):
+        for j in range(q - n + 1):
+            error = mse(S1, S2[i:i+m,j:j+n])
+            print(error)
+            if error < best:
+                best = error
+                bi = i
+                bj = j
+    return (S2[bi:bi+m,bj:bj+n], best)
 
 if __name__ == "__main__":
-    S = cv2.imread(c.get_dir_fingerprints() + "cmp00001.pgm", 0)
+    
+    S = 255 - cv2.imread(c.get_dir_fingerprints() + "cmp00001.pgm", 0)
+    
     cv2.imshow("Original", S)
-    fraction = 0.01
+    fraction = 0.0
     
-    R1 = compress_dwt2(S, fraction)
-    R2 = compress_wp2(S, fraction)
-    print(mse(S, R1))
-    print(mse(S, R2))
-    
+    R1 = compress_dwt2(S, fraction)[4:-4,4:-4]
+    R2 = compress_wp2(S, fraction)[4:-4,4:-4]
+    S = S[4:-4,4:-4]
+    (R1, e1) = best_fit(S, R1)
+    (R2, e2) = best_fit(S, R2)
     S1 = np.array(R1, dtype=np.uint8)
     S2 = np.array(R2, dtype=np.uint8)
-    #cv2.imwrite("test.pgm", S2)
+    cv2.imwrite("test.pgm", S2)
     cv2.imshow("Reconstructed DWT", S1) 
     cv2.imshow("Reconstructed WP", S2)     
