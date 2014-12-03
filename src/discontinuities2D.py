@@ -38,13 +38,13 @@ def plot_large_coeffs2_matrix(mode=pywt.MODES.ppd, level=4, threshold=0.1):
     
     for i in range(t.shape[0]):
         S = matrix(t[i])
-        wcounts_haar[i] = utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="haar",  mode=mode, level=level)), threshold)
-        wcounts_db4[i] =  utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="db4",   mode=mode, level=level)), threshold)
-        wcounts_db8[i] =  utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="db8",   mode=mode, level=level)), threshold)
-        wcounts_sym4[i] = utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="sym4",  mode=mode, level=level)), threshold)
-        wcounts_sym8[i] = utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="sym8",  mode=mode, level=level)), threshold)
-        wcounts_coif4[i] =utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="coif4", mode=mode, level=level)), threshold)
-        fcounts[i] =      utils.number_of_large_coeffs2(np.fft.fft2(S, s=None, axes=(-2, -1)).real, threshold)
+        wcounts_haar[i] = utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="haar",  mode=mode, level=level)), threshold)
+        wcounts_db4[i] =  utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="db4",   mode=mode, level=level)), threshold)
+        wcounts_db8[i] =  utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="db8",   mode=mode, level=level)), threshold)
+        wcounts_sym4[i] = utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="sym4",  mode=mode, level=level)), threshold)
+        wcounts_sym8[i] = utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="sym8",  mode=mode, level=level)), threshold)
+        wcounts_coif4[i] =utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="coif4", mode=mode, level=level)), threshold)
+        fcounts[i] =      utils.number_of_large_coeffs(np.fft.fft2(S, s=None, axes=(-2, -1)).real, threshold)
     
     pylab.figure()
     pylab.title("threshold = " + str(threshold))
@@ -85,13 +85,13 @@ def plot_large_coeffs2_matrix2(mode=pywt.MODES.ppd, level=4, threshold=0.1):
     
     for i in range(t.shape[0]):
         S = matrix2(t[i])
-        wcounts_haar[i] = utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="haar",  mode=mode, level=level)), threshold)
-        wcounts_db4[i] =  utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="db4",   mode=mode, level=level)), threshold)
-        wcounts_db8[i] =  utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="db8",   mode=mode, level=level)), threshold)
-        wcounts_sym4[i] = utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="sym4",  mode=mode, level=level)), threshold)
-        wcounts_sym8[i] = utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="sym8",  mode=mode, level=level)), threshold)
-        wcounts_coif4[i] =utils.number_of_large_coeffs2(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="coif4", mode=mode, level=level)), threshold)
-        fcounts[i] =      utils.number_of_large_coeffs2(np.fft.fft2(S, s=None, axes=(-2, -1)).real, threshold)
+        wcounts_haar[i] = utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="haar",  mode=mode, level=level)), threshold)
+        wcounts_db4[i] =  utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="db4",   mode=mode, level=level)), threshold)
+        wcounts_db8[i] =  utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="db8",   mode=mode, level=level)), threshold)
+        wcounts_sym4[i] = utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="sym4",  mode=mode, level=level)), threshold)
+        wcounts_sym8[i] = utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="sym8",  mode=mode, level=level)), threshold)
+        wcounts_coif4[i] =utils.number_of_large_coeffs(utils.concat_coeffs2(pywt.wavedec2(S, wavelet="coif4", mode=mode, level=level)), threshold)
+        fcounts[i] =      utils.number_of_large_coeffs(np.fft.fft2(S, s=None, axes=(-2, -1)).real, threshold)
     
     pylab.figure()
     pylab.title("threshold = " + str(threshold))

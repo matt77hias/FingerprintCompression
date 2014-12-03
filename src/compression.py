@@ -6,11 +6,16 @@
 '''
 
 import configuration as c
+import cost
 import cv2
 import numpy as np
 import pylab
 import pywt
 import quadtree
+
+###############################################################################
+# COMPRESSION FUNCTIONS
+############################################################################### 
 
 def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.per, level=4):
     '''
@@ -25,8 +30,6 @@ def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.per, level=4):
                       in one of these types it will be converted to the default double precision
                       data format before performing computations.
     @param fraction:  The fraction.
-    @param cost:      The (single parameter) cost function that must be used while
-                      searching for the best basis.
     @param wavelet:   Wavelet to use in the transform. 
                       This must be a name of the wavelet from the wavelist() list.
     @param mode:      Signal extension mode to deal with the border distortion problem.
@@ -53,7 +56,7 @@ def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.per, level=4):
     # 2D inverse discrete wavelet transform
     return pywt.waverec2(B, wavelet=wavelet, mode=mode)
     
-def compress_wp2(S, fraction, cost=quadtree.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
+def compress_wp2(S, fraction, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
     '''
     Computes the 2D discrete wavelet packet transformation, with the best basis according
     to the given cost function, for the given 2D input signal.
@@ -67,7 +70,7 @@ def compress_wp2(S, fraction, cost=quadtree.cost_shannon, wavelet="db4", mode=py
                       in one of these types it will be converted to the default double precision
                       data format before performing computations.
     @param fraction:  The fraction.
-    @param cost:      The (single parameter) cost function that must be used while
+    @param costf:      The (single parameter) cost function that must be used while
                       searching for the best basis.
     @param wavelet:   Wavelet to use in the transform. 
                       This must be a name of the wavelet from the wavelist() list.
@@ -79,7 +82,7 @@ def compress_wp2(S, fraction, cost=quadtree.cost_shannon, wavelet="db4", mode=py
                       signal after thresholding. 
     '''
     # 2D discrete wavelet packet transform
-    Nodes = quadtree.wp2(S, cost, wavelet=wavelet, mode=mode, level=level)
+    Nodes = quadtree.wp2(S, costf, wavelet=wavelet, mode=mode, level=level)
     
     # Compression
     maximum = -1
@@ -105,8 +108,6 @@ def mse(S1, S2):
 def best_fit(S1, S2):
     (m, n) = S1.shape
     (p, q) = S2.shape
-    print (S1.shape)
-    print (S2.shape)
     bi = bj = -1
     best = np.inf
     for i in range(p - m + 1):
@@ -119,12 +120,26 @@ def best_fit(S1, S2):
                 bj = j
     return (S2[bi:bi+m,bj:bj+n], best)
 
+def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
+    S = 255 - cv2.imread(fname, 0)
+    
+    for f in fractions:
+        R1 = compress_dwt2(S, f)[level:-level,level:-level]
+        R2 = compress_wp2(S, f)[level:-level,level:-level]
+        R = S[level:-level,level:-level]
+        (R1, e1) = best_fit(R, R1)
+        (R2, e2) = best_fit(R, R2)
+    
+
 if __name__ == "__main__":
+    
+    
+    
     
     S = 255 - cv2.imread(c.get_dir_fingerprints() + "cmp00001.pgm", 0)
     
     cv2.imshow("Original", S)
-    fraction = 0.0
+    fraction = 0.01
     
     R1 = compress_dwt2(S, fraction)[4:-4,4:-4]
     R2 = compress_wp2(S, fraction)[4:-4,4:-4]

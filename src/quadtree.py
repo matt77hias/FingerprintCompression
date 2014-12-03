@@ -5,51 +5,16 @@
 @version    1.0
 '''
 
+import cost
 import node
 import numpy as np
 import pywt
 
 ###############################################################################
-# COST FUNCTIONS
-############################################################################### 
-
-def cost_threshold(threshold):
-    '''
-    Returns a cost function for computing the number of entries
-    of a 1D input signal higher (in absolute value) than the given threshold.
-    @param threshold:     The threshold value.
-    '''
-    def cost_fixed_threshold(C):
-        '''
-        Computes the number of entries of a 2D input signal
-        higher (in absolute value) than the threshold.
-        @param C:         Input signal.
-        '''
-        cost = 0
-        for i in range(C.shape[0]):
-            for j in range(C.shape[1]):
-                if (abs(C[i,j]) > threshold):
-                    cost = cost + 1
-        return cost
-    return cost_fixed_threshold
-        
-def cost_shannon(C):
-    '''
-    Computes the Shannen entropy of a 2D input signal
-    @param C:         Input signal.
-    '''
-    cost = 0
-    for i in range(C.shape[0]):
-         for j in range(C.shape[1]):
-            if (C[i,j] != 0):
-                cost = cost - C[i,j]*C[i,j]*np.log2(abs(C[i,j]))
-    return cost
-
-###############################################################################
 # ANALYSIS ALGORITHM FUNCTIONS
 ###############################################################################        
 
-def wp2(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
+def wp2(S, costf, wavelet="db4", mode=pywt.MODES.ppd, level=2):
     '''
     Returns the 2D discrete wavelet packet transformation, with the best basis according
     to the given cost function, for the given 2D input signal.
@@ -58,7 +23,7 @@ def wp2(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
                       and the output type depends on the input type. If the input data is not
                       in one of these types it will be converted to the default double precision
                       data format before performing computations.
-    @param cost:      The (single parameter) cost function that must be used while
+    @param costf:      The (single parameter) cost function that must be used while
                       searching for the best basis.
     @param wavelet:   Wavelet to use in the transform. 
                       This must be a name of the wavelet from the wavelist() list.
@@ -71,7 +36,7 @@ def wp2(S, cost, wavelet="db4", mode=pywt.MODES.ppd, level=2):
     #Data collection step
     Nodes = collect(S, wavelet=wavelet, mode=mode, level=level)
     #Dynamic programming upstream traversal
-    mark(Nodes, cost)
+    mark(Nodes, costf)
     node.print_nodes(Nodes)
     #Dynamic programming downstream traversal
     Result = []
@@ -112,24 +77,24 @@ def collect(S, wavelet, mode, level):
         Nodes[l+1] = Childs 
     return Nodes
     
-def mark(Nodes, cost):
+def mark(Nodes, costf):
     '''
     Marks every node of nodes with the best cost seen so far. 
     @param Nodes:     List containing the nodes of the 2D discrete wavelet packet
                       transformation.
-    @param cost:      The (single parameter) cost function that must be used while
+    @param costf:      The (single parameter) cost function that must be used while
                       searching for the best basis.
     '''
     for p in range(len(Nodes[-1])):
         Node = Nodes[-1][p]
-        cp = cost(Node.C)
+        cp = costf(Node.C)
         Node.cost = cp
         Node.best = cp
     for l in range(len(Nodes)-2, -1, -1):
         for p in range(len(Nodes[l])):
             Node = Nodes[l][p]
             cc = Nodes[l+1][4*p].best + Nodes[l+1][4*p+1].best + Nodes[l+1][4*p+2].best + Nodes[l+1][4*p+3].best
-            cp = cost(Node.C)
+            cp = costf(Node.C)
             Node.cost = cp
             if cp <= cc:
                 Node.best = cp
@@ -159,7 +124,8 @@ def traverse(Node, Nodes, Result):
         
 ###############################################################################
 # SYNTHESIS ALGORITHM FUNCTIONS
-###############################################################################        
+###############################################################################
+        
 def iwp2(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
     '''
     Returns the inverse 2D discrete wavelet packet transformation for the given
@@ -187,7 +153,8 @@ def iwp2(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
         
 ###############################################################################
 # TESTS
-###############################################################################                                          
+###############################################################################
+                                          
 def matrix(size = 100):
     S = np.zeros(np.array([size, size]), dtype=float)
     half = int(size / 2) - 1
@@ -205,6 +172,6 @@ def matrix2(size = 100):
       
 if __name__ == "__main__":
     S = matrix(64)
-    Nodes=wp2(S, cost_shannon)
+    Nodes=wp2(S, cost.cost_shannon)
     node.print_flattened_nodes(Nodes)
     R = iwp2(Nodes)

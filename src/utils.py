@@ -10,17 +10,9 @@ import pylab
 
 def number_of_large_coeffs(C, threshold=0.1):
     count = 0
-    for i in range(C.shape[0]):
-        if (abs(C[i]) >= threshold):
+    for c in C:
+        if (abs(c) >= threshold):
             count = count + 1
-    return count
-
-def number_of_large_coeffs2(C, threshold=0.1):
-    count = 0
-    for i in range(C.shape[0]):
-        for j in range(C.shape[1]):
-            if (abs(C[i,j]) >= threshold):
-                count = count + 1
     return count
 
 def concat_coeffs(A):
