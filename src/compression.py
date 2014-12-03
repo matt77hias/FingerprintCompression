@@ -113,7 +113,6 @@ def best_fit(S1, S2):
     for i in range(p - m + 1):
         for j in range(q - n + 1):
             error = mse(S1, S2[i:i+m,j:j+n])
-            print(error)
             if error < best:
                 best = error
                 bi = i
@@ -122,32 +121,37 @@ def best_fit(S1, S2):
 
 def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
     S = 255 - cv2.imread(fname, 0)
-    
+    E1 = np.zeros(fractions.shape)
+    E2 = np.zeros(fractions.shape)
+    i = 0
     for f in fractions:
         R1 = compress_dwt2(S, f)[level:-level,level:-level]
-        R2 = compress_wp2(S, f)[level:-level,level:-level]
+        R2 = compress_wp2(S, f, costf)[level:-level,level:-level]
         R = S[level:-level,level:-level]
         (R1, e1) = best_fit(R, R1)
         (R2, e2) = best_fit(R, R2)
+        E1[i] = e1
+        E2[i] = e2
+        i = i + 1
     
+    pylab.figure()
+    pylab.plot(fractions, E1, label='DWT')
+    pylab.plot(fractions, E2, label='WP')
+    pylab.xlabel("Fraction")
+    pylab.ylabel("Mean Square Error")
+    pylab.legend(loc=2)
+    pylab.show()
 
 if __name__ == "__main__":
+    fname = c.get_dir_fingerprints() + "cmp00001.pgm"
+    fractions = np.append([0.0], np.power(10, np.arange(-20.0, 0.0, 0.5)))
+    #fractions = np.append([0.0], np.power(10, np.arange(-5.0, 0.0, 1.0)))
+    compare(fname, fractions)
     
     
-    
-    
-    S = 255 - cv2.imread(c.get_dir_fingerprints() + "cmp00001.pgm", 0)
-    
-    cv2.imshow("Original", S)
-    fraction = 0.01
-    
-    R1 = compress_dwt2(S, fraction)[4:-4,4:-4]
-    R2 = compress_wp2(S, fraction)[4:-4,4:-4]
-    S = S[4:-4,4:-4]
-    (R1, e1) = best_fit(S, R1)
-    (R2, e2) = best_fit(S, R2)
-    S1 = np.array(R1, dtype=np.uint8)
-    S2 = np.array(R2, dtype=np.uint8)
-    cv2.imwrite("test.pgm", S2)
-    cv2.imshow("Reconstructed DWT", S1) 
-    cv2.imshow("Reconstructed WP", S2)     
+   
+    #S1 = np.array(R1, dtype=np.uint8)
+    #S2 = np.array(R2, dtype=np.uint8)
+    #cv2.imwrite("test.pgm", S2)
+    #cv2.imshow("Reconstructed DWT", S1) 
+    #cv2.imshow("Reconstructed WP", S2)     

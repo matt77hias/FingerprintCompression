@@ -10,7 +10,7 @@ import pylab
 
 def number_of_large_coeffs(C, threshold=0.1):
     count = 0
-    for c in C:
+    for c in C.flatten():
         if (abs(c) >= threshold):
             count = count + 1
     return count

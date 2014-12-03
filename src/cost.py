@@ -24,7 +24,7 @@ def cost_threshold(threshold):
         @param C:         Input signal.
         '''
         cost = 0
-        for c in C:
+        for c in C.flatten():
            if (abs(c) > threshold):
                 cost = cost + 1
         return cost
@@ -36,7 +36,7 @@ def cost_shannon(C):
     @param C:         Input signal.
     '''
     cost = 0
-    for c in C:
+    for c in C.flatten():
         if (c != 0):
             cost = cost - c*c*np.log2(abs(c))
     return cost
