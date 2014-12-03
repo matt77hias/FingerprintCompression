@@ -54,7 +54,6 @@ def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.per, level=4):
         CCD = pywt.thresholding.hard(CD, threshold, 0)
         B.append((CCH, CCV, CCD))
         
-     
     n = utils.number_of_large_coeffs(utils.concat_coeffs2(B))
     stats_dwt2.append(n)
         
@@ -104,7 +103,11 @@ def compress_wp2(S, fraction, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     
     # 2D inverse discrete wavelet packet transform
     return quadtree.iwp2(Nodes, wavelet=wavelet, mode=mode)
- 
+
+###############################################################################
+# COMPRESSION UTILITIES
+############################################################################### 
+  
 stats_dwt2 = []   
 stats_wp2 = []
       
@@ -131,6 +134,10 @@ def best_fit(S1, S2):
                 bi = i
                 bj = j
     return (S2[bi:bi+m,bj:bj+n], best)
+
+###############################################################################
+# TESTS
+###############################################################################
 
 def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
     S = 255 - cv2.imread(fname, 0)
@@ -169,8 +176,7 @@ if __name__ == "__main__":
     #fractions = np.append([0.0], np.power(10, np.arange(-5.0, 0.0, 1.0)))
     compare(fname, fractions)
     
-    
-   
+
     #S1 = np.array(R1, dtype=np.uint8)
     #S2 = np.array(R2, dtype=np.uint8)
     #cv2.imwrite("test.pgm", S2)
