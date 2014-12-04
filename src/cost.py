@@ -63,6 +63,7 @@ def visualize_cost_threshold():
     pylab.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
     pylab.xlabel("Coefficient value")
     pylab.ylabel("Cost")
+    #small hack: lower and upper value need to be the same
     pylab.ylim(-1.5,1.5)
     pylab.show()
     
