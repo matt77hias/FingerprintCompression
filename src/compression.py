@@ -141,6 +141,9 @@ def best_fit(S1, S2):
 
 write_intermediate_results = True
 
+# Note that it would of course be cleaner to change the fraction
+# multiple times between the analysis and the synthesis
+# but this is just a test method
 def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
     S = 255 - cv2.imread(fname, 0)
     E1 = np.zeros(fractions.shape)
