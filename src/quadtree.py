@@ -140,14 +140,26 @@ def iwp2(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
     @return:          The inverse 2D discrete wavelet packet transformation for the given
                       list containing the nodes of the 2D discrete wavelet packet transformation.
     '''
-    
     heapq.heapify(Nodes)
     while len(Nodes) != 1:
         Node1 = heapq.heappop(Nodes)
         Node2 = heapq.heappop(Nodes)
         Node3 = heapq.heappop(Nodes)
         Node4 = heapq.heappop(Nodes) 
-        S = pywt.idwt2((Node1.C, (Node2.C, Node3.C, Node4.C)), wavelet=wavelet, mode=mode)
+        
+        try:
+            S = pywt.idwt2((Node1.C, (Node2.C, Node3.C, Node4.C)), wavelet=wavelet, mode=mode)
+        except ValueError:
+            print("Id: " + str(Node1.level) + "," + str(Node1.index))
+            print(Node1.C.shape)
+            print("Id: " + str(Node2.level) + "," + str(Node2.index))
+            print(Node2.C.shape)
+            print("Id: " + str(Node3.level) + "," + str(Node3.index))
+            print(Node3.C.shape)
+            print("Id: " + str(Node4.level) + "," + str(Node4.index))
+            print(Node4.C.shape)
+            raise ValueError
+          
         Merged = node.Node(S, (Node1.level-1), (Node1.index / 4))
         heapq.heappush(Nodes, Merged)
     return Nodes[0].C
