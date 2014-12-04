@@ -139,6 +139,8 @@ def best_fit(S1, S2):
 # TESTS
 ###############################################################################
 
+write_intermediate_results = False
+
 def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
     S = 255 - cv2.imread(fname, 0)
     E1 = np.zeros(fractions.shape)
@@ -150,6 +152,13 @@ def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
         R = S[level:-level,level:-level]
         (R1, e1) = best_fit(R, R1)
         (R2, e2) = best_fit(R, R2)
+        
+        if write_intermediate_results:
+            S1 = 255 - np.array(R1, dtype=np.uint8)
+            S2 = 255 - np.array(R2, dtype=np.uint8)  
+            cv2.imwrite(str(i) + "_dwt_" + str(f) + " " + str(e1) + ".pgm", S1)
+            cv2.imwrite(str(i) + "_wp_" + str(f) + " " + str(e2) + ".pgm", S2)
+
         E1[i] = e1
         E2[i] = e2
         i = i + 1
@@ -169,7 +178,8 @@ def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     pylab.ylabel("Number of large coefficients")
     pylab.legend(loc=2)
     pylab.show()
-
+        
+    
 if __name__ == "__main__":
     fname = c.get_dir_fingerprints() + "cmp00001.pgm"
     fractions = np.append([0.0], np.power(10, np.arange(-20.0, 0.0, 0.5)))
