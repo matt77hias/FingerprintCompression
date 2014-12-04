@@ -139,16 +139,16 @@ def best_fit(S1, S2):
 # TESTS
 ###############################################################################
 
-write_intermediate_results = False
+write_intermediate_results = True
 
-def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
+def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=8):
     S = 255 - cv2.imread(fname, 0)
     E1 = np.zeros(fractions.shape)
     E2 = np.zeros(fractions.shape)
     i = 0
     for f in fractions:
-        R1 = compress_dwt2(S, f)[level:-level,level:-level]
-        R2 = compress_wp2(S, f, costf)[level:-level,level:-level]
+        R1 = compress_dwt2(S, f, wavelet=wavelet, mode=mode, level=level)[level:-level,level:-level]
+        R2 = compress_wp2(S, f, costf, wavelet=wavelet, mode=mode, level=level)[level:-level,level:-level]
         R = S[level:-level,level:-level]
         (R1, e1) = best_fit(R, R1)
         (R2, e2) = best_fit(R, R2)
