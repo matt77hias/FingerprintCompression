@@ -141,7 +141,7 @@ def best_fit(S1, S2):
 
 write_intermediate_results = True
 
-def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=8):
+def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
     S = 255 - cv2.imread(fname, 0)
     E1 = np.zeros(fractions.shape)
     E2 = np.zeros(fractions.shape)
