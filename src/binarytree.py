@@ -6,6 +6,7 @@
 '''
 
 import cost
+import heapq
 import node
 import numpy as np
 import pywt
@@ -138,14 +139,13 @@ def iwp(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
     @return:          The inverse 1D discrete wavelet packet transformation for the given
                       list containing the nodes of the 1D discrete wavelet packet transformation.
     '''
+    heapq.heapify(Nodes)
     while len(Nodes) != 1:
-        Nodes = sorted(Nodes, cmp=node.compare_high_level_first, reverse=False)
-        Node1 = Nodes[0]
-        Node2 = Nodes[1] 
+        Node1 = heapq.heappop(Nodes)
+        Node2 = heapq.heappop(Nodes)
         S = pywt.idwt(Node1.C, Node2.C, wavelet=wavelet, mode=mode, correct_size=True)
         Merged = node.Node(S, (Node1.level-1), (Node1.index / 2))
-        Nodes = Nodes[2:]
-        Nodes.append(Merged)
+        heapq.heappush(Nodes, Merged)
     return Nodes[0].C
 
 ###############################################################################

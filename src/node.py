@@ -59,6 +59,14 @@ class Node:
         self.index = index
         self.cost = -1
         self.best = -1
+    
+    def __cmp__(self, other):
+        '''
+        Compares this node against the given node.
+        (high levels first, low indices first)
+        @param other:     The node to compare this node to.
+        '''
+        return compare_high_level_first(self, other)
 
 def compare_low_level_first(Node1, Node2) :
     '''

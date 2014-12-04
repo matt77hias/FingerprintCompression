@@ -182,8 +182,8 @@ def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     
 if __name__ == "__main__":
     fname = c.get_dir_fingerprints() + "cmp00001.pgm"
-    fractions = np.append([0.0], np.power(10, np.arange(-20.0, 0.0, 0.5)))
-    #fractions = np.append([0.0], np.power(10, np.arange(-5.0, 0.0, 1.0)))
+    #fractions = np.append([0.0], np.power(10, np.arange(-20.0, 0.0, 0.5)))
+    fractions = np.append([0.0], np.power(10, np.arange(-5.0, 0.0, 1.0)))
     compare(fname, fractions)
     
 
