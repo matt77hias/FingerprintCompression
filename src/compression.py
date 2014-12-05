@@ -18,7 +18,7 @@ import quadtree
 # COMPRESSION FUNCTIONS
 ############################################################################### 
 
-def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.per, level=4):
+def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.ppd, level=4):
     '''
     Computes the 2D discrete wavelet transformation for the given 2D input signal.
     Sets all coefficients with an absolute value below the threshold * maximum of the absolute
@@ -36,8 +36,8 @@ def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.per, level=4):
     @param mode:      Signal extension mode to deal with the border distortion problem.
                       The default mode is periodization.
     @param level:     Number of decomposition steps to perform.
-    @return:          A list containing the nodes of the 2D discrete packet transformation
-                      for the given input signal after thresholding.
+    @return:          The inverse 2D discrete wavelet transformation for the modified coefficients
+                      of the 2D discrete wavelet transformation.
     '''
     # 2D discrete wavelet transform
     A = pywt.wavedec2(S, wavelet=wavelet, mode=mode, level=level)
@@ -60,7 +60,7 @@ def compress_dwt2(S, fraction, wavelet="db4", mode=pywt.MODES.per, level=4):
     # 2D inverse discrete wavelet transform
     return pywt.waverec2(B, wavelet=wavelet, mode=mode)
     
-def compress_wp2(S, fraction, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
+def compress_wp2(S, fraction, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.ppd, level=4):
     '''
     Computes the 2D discrete wavelet packet transformation, with the best basis according
     to the given cost function, for the given 2D input signal.
@@ -81,9 +81,8 @@ def compress_wp2(S, fraction, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     @param mode:      Signal extension mode to deal with the border distortion problem.
                       The default mode is periodization.
     @param level:     Number of decomposition steps to perform.
-    @return:          A list containing the nodes of the 2D discrete wavelet packet transformation,
-                      with the best basis according to the given cost function, for the given input
-                      signal after thresholding. 
+    @return:          The inverse 2D discrete wavelet packet transformation for the modified coefficients
+                      of the 2D discrete wavelet packet transformation.
     '''
     # 2D discrete wavelet packet transform
     Nodes = quadtree.wp2(S, costf, wavelet=wavelet, mode=mode, level=level)
@@ -107,9 +106,6 @@ def compress_wp2(S, fraction, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
 ###############################################################################
 # COMPRESSION UTILITIES
 ############################################################################### 
-  
-stats_dwt2 = []   
-stats_wp2 = []
       
 def mse(S1, S2):
     '''
@@ -140,11 +136,13 @@ def best_fit(S1, S2):
 ###############################################################################
 
 write_intermediate_results = True
+stats_dwt2 = []   
+stats_wp2 = []
 
 # Note that it would of course be cleaner to change the fraction
 # multiple times between the analysis and the synthesis
 # but this is just a test method
-def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.per, level=4):
+def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.ppd, level=4):
     S = 255 - cv2.imread(fname, 0)
     E1 = np.zeros(fractions.shape)
     E2 = np.zeros(fractions.shape)
@@ -180,8 +178,7 @@ def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     pylab.xlabel("Fraction")
     pylab.ylabel("Number of large coefficients")
     pylab.legend(loc=2)
-    pylab.show()
-        
+    pylab.show()      
     
 if __name__ == "__main__":
     fname = c.get_dir_fingerprints() + "cmp00001.pgm"
