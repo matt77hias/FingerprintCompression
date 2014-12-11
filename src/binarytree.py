@@ -170,6 +170,7 @@ def get_smooth_func():
       
 if __name__ == "__main__":
     S = get_smooth_func()
+    #S = samples()
     Nodes=wp(S, cost.cost_shannon)
     node.print_flattened_nodes(Nodes)
     R = iwp(Nodes)

@@ -15,7 +15,7 @@ import pywt
 # ANALYSIS ALGORITHM FUNCTIONS
 ###############################################################################        
 
-def wp2(S, costf, wavelet="db4", mode=pywt.MODES.ppd, level=2):
+def wp2(S, costf, wavelet="db4", mode=pywt.MODES.ppd, level=4):
     '''
     Returns the 2D discrete wavelet packet transformation, with the best basis according
     to the given cost function, for the given 2D input signal.
@@ -185,6 +185,7 @@ def matrix2(size = 100):
       
 if __name__ == "__main__":
     S = matrix(64)
+    #S = matrix2(64)
     Nodes=wp2(S, cost.cost_shannon)
     node.print_flattened_nodes(Nodes)
     R = iwp2(Nodes)
