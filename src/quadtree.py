@@ -4,7 +4,6 @@
 @author     Matthias Moulin & Vincent Peeters
 @version    1.0
 '''
-
 import cost
 import heapq
 import node
@@ -182,10 +181,29 @@ def matrix2(size = 100):
             if (i-half)*(i-half) + (j-half)*(j-half) <= 10:
                 S[i,j] = 1
     return S
+
+import configuration as c
+import cv2
+def house():
+    fname = c.get_dir_fingerprints() + "house.tif"
+    return cv2.imread(fname, 0)
+
+def fingerprint():
+    fname = c.get_dir_fingerprints() + "cmp00001.pgm"
+    return cv2.imread(fname, 0)   
       
 if __name__ == "__main__":
     S = matrix(64)
     #S = matrix2(64)
-    Nodes=wp2(S, cost.cost_shannon)
+    #Nodes=wp2(S, cost.cost_shannon)
+    #Nodes=wp2(S, cost.cost_threshold(0.01))
+    #node.print_flattened_nodes(Nodes)
+    #R = iwp2(Nodes)
+    
+    S = house()
+    #S = fingerprint()
+    #Nodes=wp2(S, cost.cost_shannon)
+    Nodes=wp2(S, cost.cost_threshold(0.01))
     node.print_flattened_nodes(Nodes)
-    R = iwp2(Nodes)
+    
+    

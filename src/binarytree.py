@@ -172,5 +172,6 @@ if __name__ == "__main__":
     S = get_smooth_func()
     #S = samples()
     Nodes=wp(S, cost.cost_shannon)
+    #Nodes=wp(S, cost.cost_threshold(0.01))
     node.print_flattened_nodes(Nodes)
     R = iwp(Nodes)

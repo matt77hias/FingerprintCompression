@@ -185,10 +185,3 @@ if __name__ == "__main__":
     fractions = np.append([0.0], np.power(10, np.arange(-20.0, 0.0, 0.5)))
     #fractions = np.append([0.0], np.power(10, np.arange(-5.0, 0.0, 1.0)))
     compare(fname, fractions)
-    
-
-    #S1 = np.array(R1, dtype=np.uint8)
-    #S2 = np.array(R2, dtype=np.uint8)
-    #cv2.imwrite("test.pgm", S2)
-    #cv2.imshow("Reconstructed DWT", S1) 
-    #cv2.imshow("Reconstructed WP", S2)     
