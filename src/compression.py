@@ -4,15 +4,12 @@
 @author     Matthias Moulin & Vincent Peeters
 @version    1.0
 '''
-
-import configuration as c
 import cost
-import cv2
 import numpy as np
-import pylab
 import pywt
-import utils
 import quadtree
+import utils
+import wsq
 
 ###############################################################################
 # COMPRESSION FUNCTIONS
@@ -102,6 +99,45 @@ def compress_wp2(S, fraction, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     
     # 2D inverse discrete wavelet packet transform
     return quadtree.iwp2(Nodes, wavelet=wavelet, mode=mode)
+    
+def compress_sd(S, fraction, wavelet="db4", mode=pywt.MODES.ppd):
+    '''
+    Computes the subband decomposition for fingerprints for the given 2D input signal.
+    Sets all coefficients with an absolute value below the threshold * maximum of the absolute
+    values of the coefficients to zero.
+    Returns the inverse subband decomposition for fingerprints for the modified coefficients
+    of the subband decomposition for fingerprints.
+    @param S:         Input signal.
+                      Both single and double precision floating-point data types are supported
+                      and the output type depends on the input type. If the input data is not
+                      in one of these types it will be converted to the default double precision
+                      data format before performing computations.
+    @param fraction:  The fraction.
+    @param wavelet:   Wavelet to use in the transform. 
+                      This must be a name of the wavelet from the wavelist() list.
+    @param mode:      Signal extension mode to deal with the border distortion problem.
+                      The default mode is periodization.
+    @return:          The inverse subband decomposition for fingerprints for the modified coefficients
+                      of the subband decomposition for fingerprints.
+    '''
+    # 2D discrete wavelet packet transform
+    Nodes = wsq.sd(S, wavelet=wavelet, mode=mode)
+    
+    # Compression
+    maximum = -1
+    for Node in Nodes:
+        maximum = max(maximum, np.amax(abs(Node.C)))
+    threshold = fraction * maximum
+    for Node in Nodes:
+        Node.C = pywt.thresholding.hard(Node.C, threshold, 0)
+     
+    n = 0
+    for Node in Nodes:   
+        n = n + utils.number_of_large_coeffs(Node.C)
+    stats_sd.append(n)
+    
+    # 2D inverse discrete wavelet packet transform
+    return wsq.isd(Nodes, wavelet=wavelet, mode=mode)
 
 ###############################################################################
 # COMPRESSION UTILITIES
@@ -135,9 +171,14 @@ def best_fit(S1, S2):
 # TESTS
 ###############################################################################
 
+import configuration as c
+import cv2
+import pylab
+
 write_intermediate_results = True
 stats_dwt2 = []   
 stats_wp2 = []
+stats_sd = []
 
 # Note that it would of course be cleaner to change the fraction
 # multiple times between the analysis and the synthesis
@@ -178,10 +219,50 @@ def compare(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.
     pylab.xlabel("Fraction")
     pylab.ylabel("Number of large coefficients")
     pylab.legend(loc=2)
-    pylab.show()      
+    pylab.show()
+    
+def compare2(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt.MODES.ppd):
+    level = 5
+    S = 255 - cv2.imread(fname, 0)
+    E1 = np.zeros(fractions.shape)
+    E2 = np.zeros(fractions.shape)
+    i = 0
+    for f in fractions:
+        R1 = compress_sd(S, wavelet=wavelet, mode=mode, level=level)[level:-level,level:-level]
+        R2 = compress_wp2(S, f, costf, wavelet=wavelet, mode=mode, level=level)[level:-level,level:-level]
+        R = S[level:-level,level:-level]
+        (R1, e1) = best_fit(R, R1)
+        (R2, e2) = best_fit(R, R2)
+        
+        if write_intermediate_results:
+            S1 = 255 - np.array(R1, dtype=np.uint8)
+            S2 = 255 - np.array(R2, dtype=np.uint8)  
+            cv2.imwrite(str(i) + "_sd_" + str(f) + " " + str(e1) + ".pgm", S1)
+            cv2.imwrite(str(i) + "_wp_" + str(f) + " " + str(e2) + ".pgm", S2)
+
+        E1[i] = e1
+        E2[i] = e2
+        i = i + 1
+    
+    pylab.figure()
+    pylab.plot(fractions, E1, label='SD')
+    pylab.plot(fractions, E2, label='WP')
+    pylab.xlabel("Fraction")
+    pylab.ylabel("Mean Square Error")
+    pylab.legend(loc=2)
+    pylab.show()
+    
+    pylab.figure()
+    pylab.plot(fractions, stats_dwt2, label='SD')
+    pylab.plot(fractions, stats_wp2, label='WP')
+    pylab.xlabel("Fraction")
+    pylab.ylabel("Number of large coefficients")
+    pylab.legend(loc=2)
+    pylab.show()         
     
 if __name__ == "__main__":
     fname = c.get_dir_fingerprints() + "cmp00001.pgm"
     fractions = np.append([0.0], np.power(10, np.arange(-20.0, 0.0, 0.5)))
     #fractions = np.append([0.0], np.power(10, np.arange(-5.0, 0.0, 1.0)))
-    compare(fname, fractions)
+    #compare(fname, fractions)
+    compare2(fname, fractions)

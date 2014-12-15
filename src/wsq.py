@@ -1,3 +1,9 @@
+'''
+3 Wavelet packets
+3.2 The WSQ standard
+@author     Matthias Moulin & Vincent Peeters
+@version    1.0
+'''
 import node
 import quadtree
 import pywt
@@ -6,9 +12,9 @@ import pywt
 # ANALYSIS ALGORITHM FUNCTIONS
 ###############################################################################  
 
-def subband_decompose(S, wavelet="db4", mode=pywt.MODES.ppd):
+def sd(S, wavelet="db4", mode=pywt.MODES.ppd):
     '''
-    Returns the 2D subband decomposition for fingerprints for the given 2D input signal.
+    Returns the subband decomposition for fingerprints for the given 2D input signal.
     @param S:         Input signal.
                       Both single and double precision floating-point data types are supported
                       and the output type depends on the input type. If the input data is not
@@ -18,7 +24,7 @@ def subband_decompose(S, wavelet="db4", mode=pywt.MODES.ppd):
                       This must be a name of the wavelet from the wavelist() list.
     @param mode:      Signal extension mode to deal with the border distortion problem.
                       The default mode is periodic-padding.
-    @return:          A list containing the nodes of the 2D subband decomposition for fingerprints
+    @return:          A list containing the nodes of the subband decomposition for fingerprints
                       for the given input signal. 
     '''
     #Data collection step
@@ -39,7 +45,7 @@ def traverse(Node, Nodes, Result):
     The node will be added to the result if it belongs to the best basis.
     Otherwise the node childs will be traversed recursively.
     @param Node:      The current node to traverse.
-    @param Nodes:     List containing the nodes of the 2D subband decomposition
+    @param Nodes:     List containing the nodes of the subband decomposition
                       for fingerprints.
     @param Result:    Buffer containing the nodes traversed so far that belong
                       to the best basis.
@@ -70,18 +76,18 @@ def traverse(Node, Nodes, Result):
 # SYNTHESIS ALGORITHM FUNCTIONS
 ###############################################################################
         
-def isubband_decompose(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
+def isd(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
     '''
-    Returns the inverse 2D subband decomposition for fingerprints for the given
-    list containing the nodes of the 2D discrete wavelet packet transformation.
-    @param Nodes:     List containing the nodes of the 2D subband decomposition
+    Returns the inverse subband decomposition for fingerprints for the given
+    list containing the nodes of the discrete wavelet packet transformation.
+    @param Nodes:     List containing the nodes of the subband decomposition
                       for fingerprints
     @param wavelet:   Wavelet to use in the transform. 
                       This must be a name of the wavelet from the wavelist() list.
     @param mode:      Signal extension mode to deal with the border distortion problem.
                       The default mode is periodic-padding.
-    @return:          The inverse 2D subband decomposition for fingerprints for the given
-                      list containing the nodes of the 2D discrete wavelet packet transformation.
+    @return:          The inverse subband decomposition for fingerprints for the given
+                      list containing the nodes of the discrete wavelet packet transformation.
     '''
     return quadtree.iwp2(Nodes, wavelet=wavelet, mode=mode)
 
@@ -97,5 +103,5 @@ def fingerprint():
       
 if __name__ == "__main__":
     S = fingerprint()
-    Nodes=subband_decompose(S)
+    Nodes=sd(S)
     node.print_flattened_nodes(Nodes)
