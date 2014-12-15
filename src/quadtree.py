@@ -104,7 +104,7 @@ def mark(Nodes, costf):
 def traverse(Node, Nodes, Result):
     '''
     Traverses the given node.
-    The node will be aadded to the result if it belongs to the best basis.
+    The node will be added to the result if it belongs to the best basis.
     Otherwise the node childs will be traversed recursively.
     @param Node:      The current node to traverse.
     @param Nodes:     List containing the nodes of the 2D discrete wavelet packet
@@ -205,5 +205,3 @@ if __name__ == "__main__":
     #Nodes=wp2(S, cost.cost_shannon)
     Nodes=wp2(S, cost.cost_threshold(0.01))
     node.print_flattened_nodes(Nodes)
-    
-    
