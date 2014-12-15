@@ -13,7 +13,8 @@ def get_dir_prefix():
     if (os.environ.get("USERNAME") == "Matthias"):
         return "C:/Users/Matthias/Desktop/Bir/Ma2.1/Wavelets/Project/FingerprintCompression/"
     else:
-        return ""
+        return "/Users/vincentpeeters/Wiskundige Ingenieurs/Wavelets/Git/FingerprintCompression/"
+        #return "~/Wiskundige Ingenieurs/Wavelets/Git/FingerprintCompression/"
 
 def get_dir_fingerprints():
     return get_dir_prefix() + dir_fingerprints
