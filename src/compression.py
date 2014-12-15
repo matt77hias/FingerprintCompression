@@ -228,7 +228,7 @@ def compare2(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt
     E2 = np.zeros(fractions.shape)
     i = 0
     for f in fractions:
-        R1 = compress_sd(S, wavelet=wavelet, mode=mode, level=level)[level:-level,level:-level]
+        R1 = compress_sd(S, f, wavelet=wavelet, mode=mode)[level:-level,level:-level]
         R2 = compress_wp2(S, f, costf, wavelet=wavelet, mode=mode, level=level)[level:-level,level:-level]
         R = S[level:-level,level:-level]
         (R1, e1) = best_fit(R, R1)
@@ -253,7 +253,7 @@ def compare2(fname, fractions, costf=cost.cost_shannon, wavelet="db4", mode=pywt
     pylab.show()
     
     pylab.figure()
-    pylab.plot(fractions, stats_dwt2, label='SD')
+    pylab.plot(fractions, stats_sd, label='SD')
     pylab.plot(fractions, stats_wp2, label='WP')
     pylab.xlabel("Fraction")
     pylab.ylabel("Number of large coefficients")
@@ -265,4 +265,8 @@ if __name__ == "__main__":
     fractions = np.append([0.0], np.power(10, np.arange(-20.0, 0.0, 0.5)))
     #fractions = np.append([0.0], np.power(10, np.arange(-5.0, 0.0, 1.0)))
     #compare(fname, fractions)
+    
+    fname = c.get_dir_fingerprints() + "cmp00002.pgm"
+    fractions = np.append([0.0], np.power(10, np.arange(-20.0, 0.0, 0.5)))
+    #fractions = np.append([0.0], np.power(10, np.arange(-5.0, 0.0, 1.0)))
     compare2(fname, fractions)
