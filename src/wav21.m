@@ -1,10 +1,15 @@
 % clear all;
+%db1,4,8,12
+%level 1,2,3,
+
+
+
 dwtmode('per')
 startup;
 waves = [];
 points = [1];
 
-wavelet = 'db2';
+wavelet = 'db1';
 
 depth =3;
 n = 1;
@@ -50,6 +55,7 @@ threshold = 0.01;
 
  x= wprec(T);
  Nhigh = N;
+ Nlow = 1;
  while x(Nlow)  < threshold
     Nlow = Nlow +1; 
  end
@@ -71,24 +77,34 @@ end
 %bypass thinking about indexes
  points = [points(1:end-1); length(waves)];
 
+ %% 
+ 
 
  %% look at the waves
  
+ xmax = 800;
+ xmin= 0;
+ 
+ shift = (xmax - points(end))/2;
+ 
+ 
  % Create figure
-figure1 = figure;
+figure1 = figure('Position', [100, 100, 2000, 600]);
 
 % Create axes
 axes1 = axes('Parent',figure1);
+
+ xlim([xmin xmax])
 hold(axes1,'on');
  
 % Create ylabel
-ylabel({'height of components'});
+% ylabel({'height of components'});
 
 % Create xlabel
 xlabel({'position in original signal'});
 
  for i = 1:(length(points) -1)
-     plot(points(i):points(i+1),waves(points(i):points(i+1)),'DisplayName',strcat('basis for leaf.',num2str(i-1)));
+     plot((points(i):points(i+1))+shift,waves(points(i):points(i+1)),'DisplayName',strcat('(',num2str(depth),',',num2str(i-1),')'));
      
  end
  
@@ -97,7 +113,7 @@ legend1 = legend(axes1,'show');
 set(legend1,'FontSize',9);
 
 %% save it
-waveletDec = strcat(wavelet, ' with depth ');
-saveas(figure1, strcat(waveletDec,num2str( depth )) , 'png')
+% waveletDec = strcat(wavelet, ' with depth ');
+% saveas(figure1, strcat(waveletDec,num2str( depth )) , 'png')
  
 % 
