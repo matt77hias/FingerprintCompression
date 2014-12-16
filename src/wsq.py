@@ -98,7 +98,7 @@ def isd(Nodes, wavelet="db4", mode=pywt.MODES.ppd):
 import configuration as c
 import cv2
 def fingerprint():
-    fname = c.get_dir_fingerprints() + "cmp00001.pgm"
+    fname = c.get_dir_fingerprints() + "cmp00002.pgm"
     return cv2.imread(fname, 0)   
       
 if __name__ == "__main__":

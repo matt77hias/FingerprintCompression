@@ -20,7 +20,7 @@ def samples(nb_samples=1000):
     t = (np.linspace(-1,1,nb_samples+1))[:-1]
     return np.vectorize(h)(x=t)
     
-def plot_large_coeffs(mode=pywt.MODES.ppd, level=4, threshold=0.1):
+def plot_large_coeffs(f, mode=pywt.MODES.ppd, level=4, threshold=0.1):
     t = np.arange(1, 10000, 100)
     wcounts_haar = np.zeros(t.shape)
     wcounts_db4 =  np.zeros(t.shape)
@@ -31,7 +31,7 @@ def plot_large_coeffs(mode=pywt.MODES.ppd, level=4, threshold=0.1):
     fcounts =      np.zeros(t.shape)
     
     for i in range(t.shape[0]):
-        S = samples(t[i])
+        S = f(t[i])
         wcounts_haar[i] = utils.number_of_large_coeffs(utils.concat_coeffs(pywt.wavedec(S, wavelet="haar",  mode=mode, level=level)), threshold)
         wcounts_db4[i] =  utils.number_of_large_coeffs(utils.concat_coeffs(pywt.wavedec(S, wavelet="db4",   mode=mode, level=level)), threshold)
         wcounts_db8[i] =  utils.number_of_large_coeffs(utils.concat_coeffs(pywt.wavedec(S, wavelet="db8",   mode=mode, level=level)), threshold)
@@ -76,8 +76,7 @@ def task_fft(S):
     utils.draw_coeffs(A)
 
 if __name__ == "__main__":
-    plot_large_coeffs()
-    
+    plot_large_coeffs(samples)
     S = samples()
     task_fwt(S)
     task_fft(S)

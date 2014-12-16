@@ -181,6 +181,15 @@ def matrix2(size = 100):
             if (i-half)*(i-half) + (j-half)*(j-half) <= 10:
                 S[i,j] = 1
     return S
+    
+def matrix3(size = 100):
+    S = np.zeros(np.array([size, size]), dtype=float)
+    half = int(size / 2) - 1
+    for i in range(S.shape[0]):
+        for j in range(S.shape[1]):
+            if (abs(i-half) <= 3 and abs(j-half) <= 6):
+                S[i,j] = 1
+    return S
 
 import configuration as c
 import cv2
@@ -195,13 +204,14 @@ def fingerprint():
 if __name__ == "__main__":
     S = matrix(64)
     #S = matrix2(64)
+    #S = matrix3(64)
+    Nodes=wp2(S, cost.cost_shannon)
+    #Nodes=wp2(S, cost.cost_threshold(0.01))
+    node.print_flattened_nodes(Nodes)
+    #R = iwp2(Nodes)
+    
+    #S = house()
+    #S = fingerprint()
     #Nodes=wp2(S, cost.cost_shannon)
     #Nodes=wp2(S, cost.cost_threshold(0.01))
     #node.print_flattened_nodes(Nodes)
-    #R = iwp2(Nodes)
-    
-    S = house()
-    #S = fingerprint()
-    #Nodes=wp2(S, cost.cost_shannon)
-    Nodes=wp2(S, cost.cost_threshold(0.01))
-    node.print_flattened_nodes(Nodes)
