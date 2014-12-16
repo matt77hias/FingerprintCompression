@@ -175,7 +175,7 @@ import configuration as c
 import cv2
 import pylab
 
-write_intermediate_results = False
+write_intermediate_results = True
 
 # Note that it would of course be cleaner to change the fraction
 # multiple times between the analysis and the synthesis
