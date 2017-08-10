@@ -1,4 +1,4 @@
-#Fingerprint Compression
+# Fingerprint Compression
 
 Course Wavelets: Fingerprint Compression using wavelet packets
 
