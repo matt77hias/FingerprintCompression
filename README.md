@@ -15,6 +15,6 @@ Course Wavelets: Fingerprint Compression using wavelet packets
 
 
 <p align="center">
-<img src="img/section 3/db4_lvl=4_ppd/figure_3.1.png" width="430">
-<img src="img/section 3/db4_lvl=4_ppd/figure_3.2.png" width="430">
+<img src="img/section 3/db4_lvl=4_ppd/figure_3.1.png" width="410">
+<img src="img/section 3/db4_lvl=4_ppd/figure_3.2.png" width="410">
 </p>
